@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Perkly</title><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg"><meta name="theme-color" content="#7c3aed">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#fff;--bg2:#f6f4fc;--tx:#1b1530;--mu:#6b647f;--pr:#7c3aed;--pl:#ede9fe;--bd:#e7e3f3;--ok:#16a34a;--er:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15101f;--bg2:#1e1830;--tx:#f3f0fb;--mu:#a69fbb;--pl:#2d2250;--bd:#352c52}}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--tx);font-family:Heebo,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+#app{max-width:560px;margin:auto;padding:16px 16px 96px;min-height:100%}
+h1,h2,h3{margin:0}h2{font-size:20px}h3{font-size:16px}p{margin:4px 0;color:var(--mu);font-size:14px}
+.card{background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 4px 18px rgba(124,58,237,.06)}
+.btn{background:var(--pr);color:#fff;border:0;border-radius:14px;padding:12px 18px;font:600 15px Heebo,sans-serif;cursor:pointer;width:100%;margin-top:8px}
+.btn.sm{width:auto;padding:8px 14px;margin:0;font-size:13px}.btn.ghost{background:var(--pl);color:var(--pr)}.btn.red{background:var(--er)}.btn:disabled{opacity:.45}
+input,select{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;font:15px Heebo,sans-serif;margin-top:4px;background:var(--bg2);color:var(--tx)}
+label{display:block;font-size:13px;color:var(--mu);margin-top:10px}
+.row{display:flex;align-items:center;gap:12px;justify-content:space-between}.row>div:first-child{flex:1;min-width:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--pl);border-radius:18px;padding:14px}.stat b{font-size:24px;display:block;color:var(--pr)}
+.logo{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:var(--pl);flex:none}
+.pill{background:var(--pl);color:var(--pr);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:600}
+nav{position:fixed;bottom:0;inset-inline:0;background:var(--bg);border-top:1px solid var(--bd);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));max-width:560px;margin:auto}
+nav a{flex:1;text-align:center;font-size:11px;color:var(--mu);cursor:pointer;padding:4px}nav a i{display:block;font-style:normal;font-size:20px}nav a.on{color:var(--pr);font-weight:600}
+.bars{display:flex;gap:8px;align-items:flex-end;height:110px}.bars div{flex:1;text-align:center;font-size:11px;color:var(--mu);display:flex;flex-direction:column;justify-content:flex-end;height:100%}.bars span{background:var(--pr);border-radius:8px 8px 0 0;display:block;min-height:3px}
+.bar{height:8px;background:var(--pl);border-radius:9px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--pr);border-radius:9px}
+.ov{position:fixed;inset:0;background:rgba(20,10,40,.5);display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:var(--bg);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.tabs{display:flex;background:var(--pl);border-radius:14px;padding:4px;margin:12px 0}.tabs a{flex:1;text-align:center;padding:9px;border-radius:11px;font-size:14px;cursor:pointer;color:var(--pr)}.tabs a.on{background:var(--pr);color:#fff}
+.code{font:800 26px monospace;letter-spacing:3px;color:var(--pr);text-align:center;background:var(--pl);border-radius:14px;padding:10px;margin-top:8px}
+.toast{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));inset-inline:16px;max-width:520px;margin:auto;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:14px;z-index:20;text-align:center}
+.pos{color:var(--ok);font-weight:600}.neg{color:var(--er);font-weight:600}.hero{text-align:center;padding:30px 0 6px}.hero h1{font-size:38px;color:var(--pr);font-weight:800}
+</style></head><body><div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.75.0/dist/umd/supabase.js"></script>
+<script>
+const SB_URL='https://hbahasipkhewyputjqfk.supabase.co',SB_KEY='sb_publishable_TeswwT3KicIrkHUmAZr5JQ_Ke-5Lmct'; // ← להדביק כאן (Project Settings → API)
+const $=s=>document.querySelector(s),D=864e5;
+const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let sb,U=null,role=null,S={mem:[],tx:[],vch:[],biz:[]},tab='home',cur=null,aR='c',aM='in',busy=false,pj=(location.hash.match(/join=(\w+)/)||[])[1];
+const fd=t=>new Date(t).toLocaleDateString('he-IL',{day:'numeric',month:'short'});
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.append(d);setTimeout(()=>d.remove(),2800)}
+function modal(t,f,ok,btn){const d=document.createElement('div');d.className='ov';
+ d.innerHTML=`<form class="sheet"><h3>${t}</h3>${f.map(x=>`<label>${x.l}${x.o?`<select name="${x.n}">${x.o.map(o=>`<option value="${o[0]}">${E(o[1])}</option>`).join('')}</select>`:`<input name="${x.n}" type="${x.t||'text'}" value="${E(x.v||'')}" ${x.t=='number'?'min="1" step="any"':''} required>`}</label>`).join('')}<button class="btn">${btn||'אישור'}</button><button type="button" class="btn ghost" onclick="this.closest('.ov').remove()">ביטול</button></form>`;
+ d.onclick=e=>{if(e.target==d)d.remove()};
+ d.querySelector('form').onsubmit=e=>{e.preventDefault();ok(Object.fromEntries(new FormData(e.target)));d.remove()};document.body.append(d)}
+const q=p=>p.then(r=>{if(r.error)throw r.error;return r.data});
+async function act(fn,msg){if(busy)return;busy=true;try{const r=await fn();await load();R();if(msg)toast(typeof msg=='function'?msg(r):msg)}catch(e){toast(e.message||'שגיאה')}busy=false}
+async function load(){try{
+ const sel='*,rewards(*),coupons(*)';
+ let [b]=await q(sb.from('businesses').select(sel).eq('owner_id',U.id));
+ if(!b&&U.user_metadata?.role=='owner')[b]=await q(sb.from('businesses').insert({owner_id:U.id,name:U.user_metadata.name||'העסק שלי'}).select(sel));
+ const o={ascending:false};
+ if(b){role='o';S.b=b;[S.mem,S.tx,S.vch]=await Promise.all([q(sb.from('memberships').select('*,customers(name)').eq('business_id',b.id)),q(sb.from('transactions').select('*,customers(name)').eq('business_id',b.id).order('created_at',o).limit(500)),q(sb.from('vouchers').select('*,customers(name)').eq('business_id',b.id).order('created_at',o).limit(100))])}
+ else{role='c';[S.biz,S.mem,S.tx,S.vch]=await Promise.all([q(sb.from('businesses').select('id,name,logo,color,join_code,rewards(*),coupons(*)')),q(sb.from('memberships').select('*').eq('customer_id',U.id)),q(sb.from('transactions').select('*,businesses(name)').eq('customer_id',U.id).order('created_at',o).limit(200)),q(sb.from('vouchers').select('*').eq('customer_id',U.id).order('created_at',o))]);
+  if(pj){const x=S.biz.find(v=>v.join_code==pj);pj=null;if(x){if(!S.mem.some(m=>m.business_id==x.id)){await q(sb.from('memberships').insert({business_id:x.id,customer_id:U.id}));S.mem.push({business_id:x.id,points:0});toast('הצטרפת למועדון! 🎉')}cur=x.id;tab='wal'}}}
+}catch(e){toast(e.message)}}
+async function auth(e){e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
+ try{if(aM=='in'){const r=await sb.auth.signInWithPassword({email:f.email,password:f.pw});if(r.error)throw r.error;U=r.data.user}
+ else{const r=await sb.auth.signUp({email:f.email,password:f.pw,options:{data:{role:aR=='o'?'owner':'customer',name:f.name}}});if(r.error)throw r.error;
+  if(!r.data.session){aM='in';R();return toast('נשלח מייל אימות. אשרו אותו ואז התחברו')}U=r.data.user}
+ await load();if(role=='o')tab='home';else if(!cur)tab='exp';R()}catch(x){toast(x.message)}}
+async function out(){await sb.auth.signOut();U=null;role=null;cur=null;R()}
+function go(k){tab=k;cur=null;R()}
+const joinUrl=b=>location.href.split('#')[0]+'#join='+b.join_code;
+const join=id=>act(async()=>{await q(sb.from('memberships').insert({business_id:id,customer_id:U.id}));cur=id;tab='wal'},'הצטרפת למועדון! 🎉');
+const redeem=rid=>act(()=>q(sb.rpc('redeem_reward',{rid})),c=>'ההטבה מומשה! קוד: '+c);
+function addP(cid){const ms=S.mem;if(!ms.length)return toast('אין לקוחות עדיין');
+ const f=[{l:'סכום הרכישה (₪)',n:'amt',t:'number'}];if(!cid)f.unshift({l:'לקוח',n:'c',o:ms.map(m=>[m.customer_id,m.customers.name])});
+ modal('הוספת נקודות',f,o=>act(()=>q(sb.rpc('add_points',{b:S.b.id,c:cid||o.c,amt:+o.amt})),p=>`נוספו ${p} נקודות`),'הוסף')}
+function useV(){modal('אימות קוד מימוש',[{l:'קוד לקוח',n:'code'}],o=>{const c=o.code.trim().toUpperCase(),v=S.vch.find(x=>x.code==c);
+ if(v&&v.status=='used')return toast('הקוד כבר מומש ❌');
+ act(()=>q(sb.rpc('use_voucher',{b:S.b.id,vcode:c})),'הקוד אומת ומומש ✓')},'מימוש')}
+const tg=(t,id,on)=>act(()=>q(sb.from(t).update({active:!on}).eq('id',id)));
+const rm=(t,id)=>confirm('למחוק?')&&act(()=>q(sb.from(t).delete().eq('id',id)));
+const addRw=()=>modal('הטבה חדשה',[{l:'שם ההטבה',n:'n'},{l:'עלות בנקודות',n:'c',t:'number'}],o=>act(()=>q(sb.from('rewards').insert({business_id:S.b.id,name:o.n,cost:Math.round(o.c)}))),'צור');
+const addCp=()=>modal('קופון חדש',[{l:'כותרת',n:'t'},{l:'קוד',n:'code'}],o=>act(()=>q(sb.from('coupons').insert({business_id:S.b.id,title:o.t,code:o.code.toUpperCase()}))),'צור');
+const editP=()=>modal('עריכת פרופיל',[{l:'שם העסק',n:'name',v:S.b.name},{l:'לוגו (אימוג׳י)',n:'logo',v:S.b.logo},{l:'צבע מותג',n:'color',t:'color',v:S.b.color}],o=>act(()=>q(sb.from('businesses').update(o).eq('id',S.b.id))));
+const rate=()=>modal('יחס נקודות',[{l:'נקודות לכל ₪1',n:'r',t:'number',v:S.b.points_per_ils}],o=>act(()=>q(sb.from('businesses').update({points_per_ils:+o.r}).eq('id',S.b.id))));
+function setupV(){return `<div class="hero"><h1>Perkly ✨</h1></div><div class="card"><h3>נדרש חיבור ל-Supabase</h3><p>פתחו את index.html ובראש הסקריפט החליפו את SB_URL ו-SB_KEY בפרטי הפרויקט שלכם, והריצו את שני קבצי ה-SQL.</p></div>`}
+function authV(){const jb=pj;
+ return `<div class="hero"><h1>Perkly ✨</h1><p>מועדון לקוחות דיגיטלי לעסקים קטנים</p></div>
+ ${jb?`<div class="card"><h3>הוזמנת להצטרף למועדון</h3><p>התחברו או הירשמו כלקוחות כדי להצטרף</p></div>`:''}
+ <div class="tabs"><a class="${aR=='c'?'on':''}" onclick="aR='c';R()">אני לקוח</a><a class="${aR=='o'?'on':''}" onclick="aR='o';R()">אני בעל עסק</a></div>
+ <div class="card"><div class="tabs"><a class="${aM=='in'?'on':''}" onclick="aM='in';R()">התחברות</a><a class="${aM=='up'?'on':''}" onclick="aM='up';R()">הרשמה</a></div>
+ <form onsubmit="auth(event)">${aM=='up'?`<label>${aR=='o'?'שם העסק':'שם מלא'}<input name="name" required></label>`:''}<label>אימייל<input name="email" type="email" required></label><label>סיסמה<input name="pw" type="password" minlength="6" required></label><button class="btn">${aM=='in'?'כניסה':'יצירת חשבון'}</button></form></div>`}
+const nav=a=>`<nav>${a.map(([k,i,l])=>`<a class="${tab==k?'on':''}" onclick="${k=='out'?'out()':`go('${k}')`}"><i>${i}</i>${l}</a>`).join('')}</nav>`;
+const cn=()=>[['exp','🏪','עסקים'],['wal','💳','הארנק'],['his','🕘','היסטוריה'],['out','🚪','יציאה']];
+function ownerV(){const b=S.b,ms=S.mem,tx=S.tx,ad=tx.filter(t=>t.kind=='earn'),vs=S.vch;
+ let h=`<div class="row"><div class="row" style="justify-content:flex-start"><div class="logo" style="background:${E(b.color)}22">${E(b.logo)}</div><div><h2>${E(b.name)}</h2><p>לוח בקרה</p></div></div></div>`;
+ if(tab=='home'){const ds=[6,5,4,3,2,1,0],sm=ds.map(d=>ad.filter(t=>Math.floor((Date.now()-new Date(t.created_at))/D)==d).reduce((a,t)=>a+ +t.amount,0)),mx=Math.max(...sm,1);
+  h+=`<div class="grid" style="margin-top:12px"><div class="stat"><b>${ms.length}</b>לקוחות</div><div class="stat"><b>₪${Math.round(ad.reduce((a,t)=>a+ +t.amount,0)).toLocaleString()}</b>מכירות</div><div class="stat"><b>${ad.reduce((a,t)=>a+t.points,0)}</b>נקודות שחולקו</div><div class="stat"><b>${vs.length}</b>מימושים</div></div>
+  <div class="grid"><button class="btn" onclick="addP()">➕ הוסף נקודות</button><button class="btn ghost" onclick="useV()">🎟️ אמת קוד</button></div>
+  <div class="card"><h3>מכירות ב-7 ימים אחרונים</h3><div class="bars" style="margin-top:12px">${sm.map((x,i)=>`<div><span style="height:${x/mx*80}%"></span>${new Date(Date.now()-ds[i]*D).toLocaleDateString('he-IL',{weekday:'narrow'})}</div>`).join('')}</div></div>
+  <div class="card"><h3>פעילות אחרונה</h3>${tx.slice(0,6).map(t=>`<div class="row" style="padding:8px 0"><div>${E(t.customers?.name)}<p>${E(t.note)} · ${fd(t.created_at)}</p></div><span class="${t.points>0?'pos':'neg'}">${t.points>0?'+':''}${t.points}</span></div>`).join('')||'<p>עדיין אין פעילות. שתפו את קוד ה-QR!</p>'}</div>`}
+ if(tab=='cus')h+=`<input id="sq" placeholder="🔍 חיפוש לקוח" oninput="window.qq=this.value;R(1)" value="${E(window.qq||'')}">`+(ms.filter(m=>(m.customers?.name||'').includes(window.qq||'')).map(m=>`<div class="card row"><div><h3>${E(m.customers?.name)}</h3><p>הצטרף ${fd(m.joined_at)}</p></div><span class="pill">${m.points} נק׳</span><button class="btn sm" onclick="addP('${m.customer_id}')">+</button></div>`).join('')||'<p>אין לקוחות עדיין. הציגו את קוד ה-QR בעסק.</p>');
+ if(tab=='rw')h+=`<button class="btn" onclick="addRw()">➕ הטבה חדשה</button><h3 style="margin-top:16px">הטבות</h3>`+b.rewards.map(r=>`<div class="card row"><div><h3>${E(r.name)}</h3><p>${r.cost} נקודות · ${r.active?'פעילה':'מושהית'}</p></div><button class="btn sm ghost" onclick="tg('rewards','${r.id}',${r.active})">${r.active?'השהה':'הפעל'}</button><button class="btn sm red" onclick="rm('rewards','${r.id}')">מחק</button></div>`).join('')+`<h3 style="margin-top:16px">קודי מימוש</h3>`+(vs.slice(0,10).map(x=>`<div class="card row"><div>${E(x.reward_name)}<p>${E(x.customers?.name)} · ${x.code}</p></div><span class="pill">${x.status=='used'?'מומש':'ממתין'}</span></div>`).join('')||'<p>אין עדיין</p>');
+ if(tab=='cp')h+=`<button class="btn" onclick="addCp()">➕ קופון חדש</button>`+b.coupons.map(r=>`<div class="card row"><div><h3>${E(r.title)}</h3><p>קוד: ${E(r.code)} · ${r.active?'פעיל':'מושהה'}</p></div><button class="btn sm ghost" onclick="tg('coupons','${r.id}',${r.active})">${r.active?'השהה':'הפעל'}</button><button class="btn sm red" onclick="rm('coupons','${r.id}')">מחק</button></div>`).join('');
+ if(tab=='prof')h+=`<div class="card" style="text-align:center"><h3>QR להצטרפות למועדון</h3><p>הציגו בקופה. לקוחות סורקים ומצטרפים</p><div id="qr" style="display:inline-block;padding:10px;background:#fff;border-radius:12px;margin-top:10px"></div><p style="word-break:break-all;direction:ltr">${E(joinUrl(b))}</p></div>
+  <div class="card"><h3>פרופיל העסק</h3><button class="btn ghost" onclick="editP()">✏️ עריכת שם, לוגו וצבע</button><button class="btn ghost" onclick="rate()">⚙️ נקודות לכל ₪1: ${b.points_per_ils}</button><button class="btn red" onclick="out()">יציאה</button></div>`;
+ return h+nav([['home','📊','סקירה'],['cus','👥','לקוחות'],['rw','🎁','הטבות'],['cp','🏷️','קופונים'],['prof','⚙️','עסק']])}
+const M=id=>S.mem.find(m=>m.business_id==id);
+function custV(){let h='';
+ if(cur){const b=S.biz.find(x=>x.id==cur),m=M(cur)||{points:0},rw=b.rewards.filter(r=>r.active),nx=rw.filter(r=>r.cost>m.points).sort((a,c)=>a.cost-c.cost)[0],vs=S.vch.filter(x=>x.business_id==b.id&&x.status=='pending');
+  h=`<a onclick="cur=null;R()" style="color:var(--pr);cursor:pointer">→ חזרה</a><div class="card" style="background:${E(b.color)};color:#fff"><div class="row"><div><h2>${E(b.name)}</h2><p style="color:#fffc">מועדון הלקוחות</p></div><div class="logo" style="background:#fff3">${E(b.logo)}</div></div><div style="font-size:42px;font-weight:800;margin-top:10px">${m.points} <span style="font-size:16px">נקודות</span></div>${nx?`<div class="bar" style="background:#fff3"><i style="width:${m.points/nx.cost*100}%;background:#fff"></i></div><p style="color:#fffd">עוד ${nx.cost-m.points} נקודות ל${E(nx.name)}</p>`:''}</div>
+  ${vs.map(x=>`<div class="card"><h3>🎟️ ${E(x.reward_name)}</h3><p>הציגו את הקוד בקופה (שימוש חד-פעמי)</p><div class="code">${E(x.code)}</div></div>`).join('')}
+  <h3>הטבות</h3>${rw.map(r=>`<div class="card row"><div><h3>${E(r.name)}</h3><p>${r.cost} נקודות</p></div><button class="btn sm" ${m.points<r.cost?'disabled':''} onclick="redeem('${r.id}')">מימוש</button></div>`).join('')||'<p>אין הטבות כרגע</p>'}
+  <h3 style="margin-top:16px">קופונים</h3>${b.coupons.filter(r=>r.active).map(r=>`<div class="card row"><div><h3>${E(r.title)}</h3></div><span class="pill">${E(r.code)}</span></div>`).join('')||'<p>אין קופונים</p>'}`;return h+nav(cn())}
+ if(tab=='exp')h=`<h2>עסקים ב-Perkly</h2>`+(S.biz.map(b=>`<div class="card row"><div class="logo" style="background:${E(b.color)}22">${E(b.logo)}</div><div><h3>${E(b.name)}</h3><p>${b.rewards.length} הטבות</p></div>${M(b.id)?`<button class="btn sm ghost" onclick="cur='${b.id}';R()">פתח</button>`:`<button class="btn sm" onclick="join('${b.id}')">הצטרף</button>`}</div>`).join('')||'<p>עדיין אין עסקים</p>');
+ if(tab=='wal')h=`<h2>הארנק שלי</h2>`+(S.mem.map(m=>{const b=S.biz.find(x=>x.id==m.business_id);return b?`<div class="card row" style="cursor:pointer" onclick="cur='${b.id}';R()"><div class="logo" style="background:${E(b.color)}22">${E(b.logo)}</div><div><h3>${E(b.name)}</h3><p>${b.rewards.filter(r=>r.active&&r.cost<=m.points).length} הטבות זמינות</p></div><b style="color:${E(b.color)};font-size:22px">${m.points}</b></div>`:''}).join('')||'<p>עוד לא הצטרפת לאף מועדון. עברו ללשונית עסקים</p>');
+ if(tab=='his')h=`<h2>היסטוריית נקודות</h2>`+(S.tx.map(t=>`<div class="card row"><div>${E(t.businesses?.name)}<p>${E(t.note)} · ${fd(t.created_at)}</p></div><span class="${t.points>0?'pos':'neg'}">${t.points>0?'+':''}${t.points}</span></div>`).join('')||'<p>אין עדיין תנועות</p>');
+ return h+nav(cn())}
+function R(keep){$('#app').innerHTML=!U?authV():role=='o'?ownerV():custV();
+ if(U&&role=='o'&&tab=='prof'&&window.QRCode)new QRCode($('#qr'),{text:joinUrl(S.b),width:170,height:170});
+ if(keep){const i=$('#sq');if(i){i.focus();i.setSelectionRange(99,99)}}else scrollTo(0,0)}
+/* ===== v2: location, menu, orders, search, real coupons, points checkout, peak hours ===== */
+let cart={},cartB=null,usePts=false,ccode='',onote='',ip=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e});
+const inst=()=>ip?ip.prompt():toast('באייפון: כפתור השיתוף ← הוסף למסך הבית. באנדרואיד: תפריט הדפדפן ← התקן אפליקציה');
+const ils=n=>'₪'+(Math.round(+n*100)/100).toLocaleString('he-IL');
+const ST={new:'חדשה',ready:'מוכנה',done:'הושלמה',cancelled:'בוטלה'};
+const tm=t=>new Date(t).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+function modal(t,f,ok,btn){const d=document.createElement('div');d.className='ov';
+ d.innerHTML=`<form class="sheet"><h3>${t}</h3>${f.map(x=>`<label>${x.l}${x.o?`<select name="${x.n}">${x.o.map(o=>`<option value="${o[0]}">${E(o[1])}</option>`).join('')}</select>`:`<input name="${x.n}" type="${x.t||'text'}" value="${E(x.v??'')}" ${x.t=='number'?(x.r===0?'min="0"':'min="0.01"')+' step="any"':''} ${x.r===0?'':'required'}>`}</label>`).join('')}<button class="btn">${btn||'אישור'}</button><button type="button" class="btn ghost" onclick="this.closest('.ov').remove()">ביטול</button></form>`;
+ d.onclick=e=>{if(e.target==d)d.remove()};
+ d.querySelector('form').onsubmit=e=>{e.preventDefault();ok(Object.fromEntries(new FormData(e.target)));d.remove()};document.body.append(d)}
+async function load(){try{
+ const sel='*,rewards(*),coupons(*),menu_items(*)',o={ascending:false};
+ let [b]=await q(sb.from('businesses').select(sel).eq('owner_id',U.id));
+ if(!b&&U.user_metadata?.role=='owner')[b]=await q(sb.from('businesses').insert({owner_id:U.id,name:U.user_metadata.name||'העסק שלי'}).select(sel));
+ if(b){role='o';S.b=b;[S.mem,S.tx,S.vch,S.ord]=await Promise.all([q(sb.from('memberships').select('*,customers(name)').eq('business_id',b.id)),q(sb.from('transactions').select('*,customers(name)').eq('business_id',b.id).order('created_at',o).limit(1000)),q(sb.from('vouchers').select('*,customers(name)').eq('business_id',b.id).order('created_at',o).limit(100)),q(sb.from('orders').select('*,customers(name),order_items(*)').eq('business_id',b.id).order('created_at',o).limit(100))])}
+ else{role='c';[S.biz,S.mem,S.tx,S.vch,S.ord]=await Promise.all([q(sb.from('businesses').select('id,name,logo,color,join_code,city,address,phone,category,description,point_value,rewards(*),coupons(*),menu_items(*)')),q(sb.from('memberships').select('*').eq('customer_id',U.id)),q(sb.from('transactions').select('*,businesses(name)').eq('customer_id',U.id).order('created_at',o).limit(200)),q(sb.from('vouchers').select('*').eq('customer_id',U.id).order('created_at',o)),q(sb.from('orders').select('*,businesses(name),order_items(*)').eq('customer_id',U.id).order('created_at',o).limit(100))]);
+  if(pj){const x=S.biz.find(v=>v.join_code==pj);pj=null;if(x){if(!S.mem.some(m=>m.business_id==x.id)){await q(sb.from('memberships').insert({business_id:x.id,customer_id:U.id}));S.mem.push({business_id:x.id,points:0});toast('הצטרפת למועדון! 🎉')}cur=x.id;tab='wal'}}}
+}catch(e){toast(e.message)}}
+function R(keep){const a=document.activeElement?.id;
+ $('#app').innerHTML=!U?authV():role=='o'?ownerV():custV();
+ if(U&&role=='o'&&tab=='prof'&&window.QRCode)new QRCode($('#qr'),{text:joinUrl(S.b),width:170,height:170});
+ if(a){const i=$('#'+a);if(i&&i.tagName=='INPUT'){i.focus();try{i.setSelectionRange(999,999)}catch(e){}}}
+ if(!keep)scrollTo(0,0)}
+/* ---- owner actions ---- */
+const ost=(id,s)=>act(()=>q(sb.rpc('set_order_status',{p_order:id,st:s})),s=='done'?'ההזמנה הושלמה והנקודות נוספו ✓':'עודכן');
+const addMi=()=>modal('פריט חדש בתפריט',[{l:'שם הפריט',n:'name'},{l:'מחיר (₪)',n:'price',t:'number'},{l:'קטגוריה (אופציונלי)',n:'category',r:0},{l:'תיאור (אופציונלי)',n:'description',r:0}],o=>act(()=>q(sb.from('menu_items').insert({business_id:S.b.id,name:o.name,price:+o.price,category:o.category||null,description:o.description||null}))),'הוסף');
+const tgm=(id,on)=>act(()=>q(sb.from('menu_items').update({available:!on}).eq('id',id)));
+const newCp=()=>modal('קופון חדש',[{l:'כותרת',n:'t'},{l:'קוד שהלקוח מקליד',n:'code'},{l:'סוג הנחה',n:'k',o:[['percent','אחוזים (%)'],['amount','סכום קבוע (₪)']]},{l:'גובה ההנחה',n:'v',t:'number'},{l:'מינימום הזמנה ב-₪ (0 = ללא)',n:'m',t:'number',r:0}],o=>act(()=>q(sb.from('coupons').insert({business_id:S.b.id,title:o.t,code:o.code.toUpperCase().trim(),kind:o.k,value:+o.v,min_order:+(o.m||0)}))),'צור');
+const editBiz=()=>{const b=S.b;modal('פרטי העסק',[{l:'שם העסק',n:'name',v:b.name},{l:'לוגו (אימוג׳י)',n:'logo',v:b.logo},{l:'צבע מותג',n:'color',t:'color',v:b.color},{l:'קטגוריה (למשל פיצריה)',n:'category',v:b.category,r:0},{l:'עיר',n:'city',v:b.city,r:0},{l:'כתובת',n:'address',v:b.address,r:0},{l:'טלפון',n:'phone',v:b.phone,r:0},{l:'תיאור קצר',n:'description',v:b.description,r:0}],o=>act(()=>q(sb.from('businesses').update(o).eq('id',b.id))))};
+const rate2=()=>modal('הגדרות נקודות',[{l:'נקודות שהלקוח צובר על כל ₪1',n:'r',t:'number',v:S.b.points_per_ils},{l:'שווי נקודה במימוש (₪)',n:'pv',t:'number',v:S.b.point_value}],o=>act(()=>q(sb.from('businesses').update({points_per_ils:+o.r,point_value:+o.pv}).eq('id',S.b.id))));
+const ocard=(o,b)=>`<div class="card"><div class="row"><div><h3>${E(o.customers?.name||o.businesses?.name)}</h3><p>${fd(o.created_at)} · ${tm(o.created_at)}</p></div><span class="pill">${ST[o.status]}</span></div><p style="color:var(--tx)">${o.order_items.map(i=>`${i.qty}× ${E(i.name)}`).join(' · ')}</p>${o.note?`<p>📝 ${E(o.note)}</p>`:''}<div class="row" style="margin-top:6px"><b>${ils(o.total)}</b>${+o.discount+ +o.points_discount>0?`<p>הנחות: ${ils(+o.discount+ +o.points_discount)}</p>`:''}</div>${b&&(o.status=='new'||o.status=='ready')?`<div class="row" style="margin-top:8px">${o.status=='new'?`<button class="btn sm" onclick="ost('${o.id}','ready')">מוכנה</button>`:`<button class="btn sm" onclick="ost('${o.id}','done')">הושלמה ✓</button>`}<button class="btn sm red" onclick="ost('${o.id}','cancelled')">ביטול</button></div>`:''}</div>`;
+function ownerV(){const b=S.b,ms=S.mem,tx=S.tx,ad=tx.filter(t=>t.kind=='earn'&&+t.amount>0),vs=S.vch,nn=S.ord.filter(o=>o.status=='new').length;
+ let h=`<div class="row"><div class="row" style="justify-content:flex-start"><div class="logo" style="background:${E(b.color)}22">${E(b.logo)}</div><div><h2>${E(b.name)}</h2><p>${E([b.category,b.city].filter(Boolean).join(' · '))||'לוח בקרה'}</p></div></div></div>`;
+ if(['rw','cp','prof'].includes(tab))h+=`<div class="tabs"><a class="${tab=='rw'?'on':''}" onclick="go('rw')">הטבות</a><a class="${tab=='cp'?'on':''}" onclick="go('cp')">קופונים</a><a class="${tab=='prof'?'on':''}" onclick="go('prof')">העסק</a></div>`;
+ if(tab=='home'){const ds=[6,5,4,3,2,1,0],sm=ds.map(d=>ad.filter(t=>Math.floor((Date.now()-new Date(t.created_at))/D)==d).reduce((a,t)=>a+ +t.amount,0)),mx=Math.max(...sm,1),hr=Array(24).fill(0);
+  ad.forEach(t=>hr[new Date(t.created_at).getHours()]++);const hx=Math.max(...hr),pk=hr.indexOf(hx);
+  h+=(!b.city||!b.menu_items.length?`<div class="card"><h3>👋 השלימו את העסק</h3><p>הוסיפו עיר ותפריט כדי שלקוחות ימצאו אתכם בחיפוש ויוכלו להזמין.</p><button class="btn ghost" onclick="go('prof')">פרטי העסק</button></div>`:'')+
+  `<div class="grid" style="margin-top:12px"><div class="stat"><b>${ms.length}</b>לקוחות</div><div class="stat"><b>${ils(ad.reduce((a,t)=>a+ +t.amount,0))}</b>מכירות</div><div class="stat"><b>${S.ord.length}</b>הזמנות</div><div class="stat"><b>${vs.length}</b>מימושים</div></div>
+  <div class="grid"><button class="btn" onclick="addP()">➕ הוסף נקודות</button><button class="btn ghost" onclick="useV()">🎟️ אמת קוד</button></div>
+  <div class="card"><h3>מכירות ב-7 ימים אחרונים</h3><div class="bars" style="margin-top:12px">${sm.map((x,i)=>`<div><span style="height:${x/mx*80}%"></span>${new Date(Date.now()-ds[i]*D).toLocaleDateString('he-IL',{weekday:'narrow'})}</div>`).join('')}</div></div>
+  <div class="card"><h3>באילו שעות קונים הכי הרבה</h3>${hx?`<p>שעת השיא: ${pk}:00–${pk+1}:00 (${hx} רכישות)</p>`:'<p>אין עדיין מספיק נתונים</p>'}<div class="bars" style="margin-top:12px;gap:2px">${hr.map((x,i)=>`<div style="font-size:9px"><span style="height:${x/Math.max(hx,1)*80}%;border-radius:4px 4px 0 0;opacity:${i==pk&&x?1:.5}"></span>${i%3==0?i:'&nbsp;'}</div>`).join('')}</div></div>
+  <div class="card"><h3>פעילות אחרונה</h3>${tx.slice(0,6).map(t=>`<div class="row" style="padding:8px 0"><div>${E(t.customers?.name)}<p>${E(t.note)} · ${fd(t.created_at)}</p></div><span class="${t.points>0?'pos':'neg'}">${t.points>0?'+':''}${t.points}</span></div>`).join('')||'<p>עדיין אין פעילות. שתפו את קוד ה-QR!</p>'}</div>`}
+ if(tab=='ord')h+=`<h3 style="margin-top:12px">הזמנות</h3>`+(S.ord.map(o=>ocard(o,1)).join('')||'<p>אין הזמנות עדיין. הוסיפו תפריט כדי שלקוחות יוכלו להזמין.</p>');
+ if(tab=='mnu')h+=`<button class="btn" style="margin-top:12px" onclick="addMi()">➕ פריט חדש</button>`+(b.menu_items.map(i=>`<div class="card row"><div><h3>${E(i.name)}</h3><p>${ils(i.price)}${i.category?' · '+E(i.category):''} · ${i.available?'זמין':'לא זמין'}</p></div><button class="btn sm ghost" onclick="tgm('${i.id}',${i.available})">${i.available?'הסתר':'הצג'}</button><button class="btn sm red" onclick="rm('menu_items','${i.id}')">מחק</button></div>`).join('')||'<p>התפריט ריק</p>');
+ if(tab=='cus')h+=`<input id="sq" placeholder="🔍 חיפוש לקוח" oninput="window.qq=this.value;R(1)" value="${E(window.qq||'')}" style="margin-top:12px">`+(ms.filter(m=>(m.customers?.name||'').includes(window.qq||'')).map(m=>`<div class="card row"><div><h3>${E(m.customers?.name)}</h3><p>הצטרף ${fd(m.joined_at)}</p></div><span class="pill">${m.points} נק׳</span><button class="btn sm" onclick="addP('${m.customer_id}')">+</button></div>`).join('')||'<p>אין לקוחות עדיין. הציגו את קוד ה-QR בעסק.</p>');
+ if(tab=='rw')h+=`<button class="btn" onclick="addRw()">➕ הטבה חדשה</button><h3 style="margin-top:16px">הטבות</h3>`+b.rewards.map(r=>`<div class="card row"><div><h3>${E(r.name)}</h3><p>${r.cost} נקודות · ${r.active?'פעילה':'מושהית'}</p></div><button class="btn sm ghost" onclick="tg('rewards','${r.id}',${r.active})">${r.active?'השהה':'הפעל'}</button><button class="btn sm red" onclick="rm('rewards','${r.id}')">מחק</button></div>`).join('')+`<h3 style="margin-top:16px">קודי מימוש</h3>`+(vs.slice(0,10).map(x=>`<div class="card row"><div>${E(x.reward_name)}<p>${E(x.customers?.name)} · ${x.code}</p></div><span class="pill">${x.status=='used'?'מומש':'ממתין'}</span></div>`).join('')||'<p>אין עדיין</p>');
+ if(tab=='cp')h+=`<button class="btn" onclick="newCp()">➕ קופון חדש</button><p>קופון מפחית את מחיר ההזמנה בפועל כשהלקוח מקליד את הקוד.</p>`+b.coupons.map(r=>`<div class="card row"><div><h3>${E(r.title)}</h3><p>קוד ${E(r.code)} · ${r.kind=='percent'?r.value+'%':ils(r.value)} הנחה${r.min_order>0?' · מעל '+ils(r.min_order):''} · ${r.active?'פעיל':'מושהה'}</p></div><button class="btn sm ghost" onclick="tg('coupons','${r.id}',${r.active})">${r.active?'השהה':'הפעל'}</button><button class="btn sm red" onclick="rm('coupons','${r.id}')">מחק</button></div>`).join('');
+ if(tab=='prof')h+=`<div class="card" style="text-align:center"><h3>QR להצטרפות למועדון</h3><p>הציגו בקופה. לקוחות סורקים ומצטרפים</p><div id="qr" style="display:inline-block;padding:10px;background:#fff;border-radius:12px;margin-top:10px"></div><p style="word-break:break-all;direction:ltr">${E(joinUrl(b))}</p></div>
+  <div class="card"><h3>פרטי העסק</h3><p>${E([b.category,b.city,b.address,b.phone].filter(Boolean).join(' · '))||'עוד לא הוזנו עיר וכתובת'}</p><button class="btn ghost" onclick="editBiz()">✏️ עריכת פרטים ומיקום</button><button class="btn ghost" onclick="rate2()">⚙️ ${b.points_per_ils} נק׳ לכל ₪1 · נקודה שווה ${ils(b.point_value)}</button><button class="btn red" onclick="out()">יציאה</button></div>`;
+ return h+nav([['home','📊','סקירה'],['ord','🧾','הזמנות'+(nn?` (${nn})`:'')],['mnu','🍕','תפריט'],['cus','👥','לקוחות'],['rw','⚙️','עוד']])}
+/* ---- customer ---- */
+const openB=id=>{cur=id;R()};
+const cq=(id,d)=>{cart[id]=Math.max(0,(cart[id]||0)+d);if(!cart[id])delete cart[id];R(1)};
+function calc(b,m){let sub=0;b.menu_items.forEach(i=>{sub+=(cart[i.id]||0)*i.price});
+ const cp=ccode&&b.coupons.find(c=>c.active&&c.code.toUpperCase()==ccode.trim().toUpperCase());let dis=0,err='';
+ if(ccode&&!cp)err='קופון לא תקף';else if(cp&&sub<cp.min_order)err='מינימום הזמנה לקופון: '+ils(cp.min_order);else if(cp)dis=Math.min(sub,cp.kind=='percent'?Math.round(sub*cp.value)/100:+cp.value);
+ let pu=0,pd=0;if(usePts&&b.point_value>0){pu=Math.max(0,Math.min(m.points,Math.floor((sub-dis)/b.point_value)));pd=Math.round(pu*b.point_value*100)/100}
+ return{sub,dis,pu,pd,tot:sub-dis-pd,err}}
+const order=b=>act(()=>q(sb.rpc('place_order',{b,items:Object.entries(cart).map(([id,qty])=>({id,qty})),ccode:ccode.trim()||null,use_points:usePts,p_note:onote||null})).then(r=>{cart={};ccode='';usePts=false;onote='';tab='ord';cur=null;return r}),'ההזמנה נשלחה לעסק ✓');
+function search(){const t=(window.sw||'').trim().toLowerCase().split(/\s+/).filter(Boolean),c=(window.sc||'').trim().toLowerCase();
+ return S.biz.map(b=>{const its=b.menu_items.filter(i=>i.available),txt=x=>[x.name,x.description,x.category].join(' ').toLowerCase(),all=(txt(b)+' '+its.map(txt).join(' ')),hit=its.filter(i=>t.some(w=>txt(i).includes(w)));
+  return t.every(w=>all.includes(w))&&(!c||(b.city||'').toLowerCase().includes(c))?{b,hit:t.length?hit.slice(0,3):[]}:null}).filter(Boolean)}
+function custV(){let h='';const bl=()=>nav([['exp','🔍','חיפוש'],['wal','💳','הארנק'],['ord','🧾','הזמנות'],['his','🕘','היסטוריה'],['out','🚪','יציאה']]);
+ if(cur){const b=S.biz.find(x=>x.id==cur);if(cartB!=cur){cart={};ccode='';usePts=false;onote='';cartB=cur}
+  const m0=M(cur),m=m0||{points:0},c=calc(b,m),mi=b.menu_items.filter(i=>i.available),rw=b.rewards.filter(r=>r.active),nx=rw.filter(r=>r.cost>m.points).sort((a,z)=>a.cost-z.cost)[0],vs=S.vch.filter(x=>x.business_id==b.id&&x.status=='pending');
+  h=`<a onclick="cur=null;R()" style="color:var(--pr);cursor:pointer">→ חזרה</a><div class="card" style="background:${E(b.color)};color:#fff"><div class="row"><div><h2>${E(b.name)}</h2><p style="color:#fffc">${E([b.category,b.city,b.address].filter(Boolean).join(' · '))}</p>${b.phone?`<p style="color:#fffc"><a href="tel:${E(b.phone)}" style="color:#fff">📞 ${E(b.phone)}</a></p>`:''}</div><div class="logo" style="background:#fff3">${E(b.logo)}</div></div><div style="font-size:42px;font-weight:800;margin-top:10px">${m.points} <span style="font-size:16px">נקודות</span></div>${nx?`<div class="bar" style="background:#fff3"><i style="width:${m.points/nx.cost*100}%;background:#fff"></i></div><p style="color:#fffd">עוד ${nx.cost-m.points} נקודות ל${E(nx.name)}</p>`:''}</div>
+  ${m0?'':`<button class="btn" onclick="join('${b.id}')">הצטרפות למועדון</button>`}
+  ${vs.map(x=>`<div class="card"><h3>🎟️ ${E(x.reward_name)}</h3><p>הציגו את הקוד בקופה (שימוש חד-פעמי)</p><div class="code">${E(x.code)}</div></div>`).join('')}
+  <h3 style="margin-top:16px">תפריט</h3>${mi.map(i=>`<div class="card row"><div><h3>${E(i.name)}</h3>${i.description?`<p>${E(i.description)}</p>`:''}<b>${ils(i.price)}</b></div><div class="row" style="gap:6px;flex:none"><button class="btn sm ghost" onclick="cq('${i.id}',-1)">−</button><b>${cart[i.id]||0}</b><button class="btn sm" onclick="cq('${i.id}',1)">+</button></div></div>`).join('')||'<p>העסק עוד לא הוסיף תפריט</p>'}
+  ${c.sub>0?`<div class="card"><h3>סיכום הזמנה</h3><label>קוד קופון<input value="${E(ccode)}" onchange="ccode=this.value;R(1)"></label>${c.err?`<p style="color:var(--er)">${c.err}</p>`:''}
+  ${b.point_value>0&&m.points>0?`<label style="display:flex;gap:8px;align-items:center;color:var(--tx)"><input type="checkbox" style="width:auto;margin:0" ${usePts?'checked':''} onchange="usePts=this.checked;R(1)">מימוש נקודות (${m.points} נק׳ = ${ils(m.points*b.point_value)})</label>`:''}
+  <label>הערה לעסק<input id="onote" value="${E(onote)}" oninput="onote=this.value"></label>
+  <div class="row" style="margin-top:10px"><p>סכום</p><b>${ils(c.sub)}</b></div>${c.dis?`<div class="row"><p>קופון</p><b class="pos">−${ils(c.dis)}</b></div>`:''}${c.pd?`<div class="row"><p>נקודות (${c.pu})</p><b class="pos">−${ils(c.pd)}</b></div>`:''}
+  <button class="btn" ${c.err?'disabled':''} onclick="order('${b.id}')">שליחת הזמנה · ${ils(c.tot)}</button><p>התשלום מתבצע בעסק. לא נשמרים פרטי אשראי.</p></div>`:''}
+  <h3 style="margin-top:16px">הטבות במימוש נקודות</h3>${rw.map(r=>`<div class="card row"><div><h3>${E(r.name)}</h3><p>${r.cost} נקודות</p></div><button class="btn sm" ${m.points<r.cost?'disabled':''} onclick="redeem('${r.id}')">מימוש</button></div>`).join('')||'<p>אין הטבות כרגע</p>'}
+  <h3 style="margin-top:16px">קופונים</h3>${b.coupons.filter(r=>r.active).map(r=>`<div class="card row"><div><h3>${E(r.title)}</h3><p>${r.kind=='percent'?r.value+'%':ils(r.value)} הנחה${r.min_order>0?' מעל '+ils(r.min_order):''}. הקלידו את הקוד בהזמנה</p></div><span class="pill">${E(r.code)}</span></div>`).join('')||'<p>אין קופונים</p>'}`;return h+bl()}
+ if(tab=='exp'){const rs=search(),cities=[...new Set(S.biz.map(b=>b.city).filter(Boolean))];
+  h=`<h2>מה מחפשים?</h2><input id="sw" placeholder="🔍 פיצה, פנס, קפה…" oninput="window.sw=this.value;R(1)" value="${E(window.sw||'')}"><input id="sc" list="cl" placeholder="📍 עיר (למשל קרית אונו)" oninput="window.sc=this.value;R(1)" value="${E(window.sc||'')}"><datalist id="cl">${cities.map(x=>`<option value="${E(x)}">`).join('')}</datalist>`+
+  (rs.map(({b,hit})=>`<div class="card"><div class="row"><div class="logo" style="background:${E(b.color)}22">${E(b.logo)}</div><div><h3>${E(b.name)}</h3><p>${E([b.category,b.city].filter(Boolean).join(' · '))}</p></div><button class="btn sm ${M(b.id)?'ghost':''}" onclick="openB('${b.id}')">${M(b.id)?'פתח':'צפה'}</button></div>${hit.length?`<p style="margin-top:8px;color:var(--tx)">${hit.map(i=>`${E(i.name)} ${ils(i.price)}`).join(' · ')}</p>`:''}</div>`).join('')||'<p style="margin-top:12px">לא נמצאו עסקים. נסו חיפוש אחר או עיר אחרת.</p>')}
+ if(tab=='wal')h=`<h2>הארנק שלי</h2>`+(S.mem.map(m=>{const b=S.biz.find(x=>x.id==m.business_id);return b?`<div class="card row" style="cursor:pointer" onclick="openB('${b.id}')"><div class="logo" style="background:${E(b.color)}22">${E(b.logo)}</div><div><h3>${E(b.name)}</h3><p>${b.rewards.filter(r=>r.active&&r.cost<=m.points).length} הטבות זמינות</p></div><b style="color:${E(b.color)};font-size:22px">${m.points}</b></div>`:''}).join('')||'<p>עוד לא הצטרפת לאף מועדון. חפשו עסק בלשונית חיפוש</p>')+`<button class="btn ghost" onclick="inst()">📲 הוסף את Perkly למסך הבית</button>`;
+ if(tab=='ord')h=`<h2>ההזמנות שלי</h2>`+(S.ord.map(o=>ocard(o,0).replace(/<h3>[^<]*<\/h3>/,`<h3>${E(o.businesses?.name)}</h3>`)).join('')||'<p>עוד לא הזמנת. פתחו עסק ובחרו מהתפריט</p>');
+ if(tab=='his')h=`<h2>היסטוריית נקודות</h2>`+(S.tx.map(t=>`<div class="card row"><div>${E(t.businesses?.name)}<p>${E(t.note)} · ${fd(t.created_at)}</p></div><span class="${t.points>0?'pos':'neg'}">${t.points>0?'+':''}${t.points}</span></div>`).join('')||'<p>אין עדיין תנועות</p>');
+ return h+bl()}
+
+(async()=>{
+ if(SB_URL.includes('YOUR')){$('#app').innerHTML=setupV();return}
+ sb=supabase.createClient(SB_URL,SB_KEY);
+ const{data}=await sb.auth.getSession();U=data.session?.user||null;
+ if(U){await load();if(role=='o')tab='home';else if(!cur)tab='exp'}
+ R();
+ if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script></body></html>
