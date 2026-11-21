@@ -195,6 +195,13 @@ function custV(){let h='';const bl=()=>nav([['exp','🔍','חיפוש'],['wal','
  return h+bl()}
 
 const delAcc=()=>{const nm=role=='o'?S.b.name:'מחק';modal('מחיקת חשבון',[{l:'פעולה בלתי הפיכה: נמחקים החשבון וכל הנתונים'+(role=='o'?' של העסק (לקוחות, תפריט, הזמנות, קופונים)':'')+'. להמשך, הקלידו: '+E(nm),n:'c'}],async o=>{if(o.c.trim()!=nm)return toast('הטקסט לא תואם');try{await q(sb.rpc('delete_my_account'));await sb.auth.signOut();U=null;role=null;cur=null;tab='home';R();toast('החשבון נמחק')}catch(e){toast(e.message)}},'מחק לצמיתות')};
+function askCode(email){modal('אימות אימייל',[{l:'הקלידו את הקוד שנשלח אל '+E(email),n:'c'}],async o=>{try{const r=await sb.auth.verifyOtp({email,token:o.c.trim(),type:'signup'});if(r.error)throw r.error;U=r.data.user;await load();if(role=='o')tab='home';else if(!cur)tab='exp';R()}catch(x){toast(x.message)}},'אימות')}
+async function auth(e){e.preventDefault();const f=Object.fromEntries(new FormData(e.target));
+ try{if(aM=='in'){const r=await sb.auth.signInWithPassword({email:f.email,password:f.pw});
+   if(r.error){if(/not confirmed/i.test(r.error.message)){await sb.auth.resend({type:'signup',email:f.email});toast('האימייל עוד לא אומת. שלחנו קוד חדש');return askCode(f.email)}throw r.error}U=r.data.user}
+ else{const r=await sb.auth.signUp({email:f.email,password:f.pw,options:{data:{role:aR=='o'?'owner':'customer',name:f.name}}});if(r.error)throw r.error;
+  if(!r.data.session){toast('שלחנו קוד אימות למייל');return askCode(f.email)}U=r.data.user}
+ await load();if(role=='o')tab='home';else if(!cur)tab='exp';R()}catch(x){toast(x.message)}}
 (async()=>{
  if(SB_URL.includes('YOUR')){$('#app').innerHTML=setupV();return}
  sb=supabase.createClient(SB_URL,SB_KEY);
